@@ -1,0 +1,51 @@
+from queue import PriorityQueue
+
+def ucs(start,goal,graph,h):
+    q = PriorityQueue()
+    q.put((h[start],0,start,[start]))
+
+
+    visited = set()
+
+    while not q.empty():
+        f,cc,cn,cp = q.get()
+
+        if cn == goal:
+            return cc,cp
+        
+        if cn in visited:
+            continue
+
+        visited.add(cn)
+
+        for neighbour,cost in graph[cn].items():
+            if neighbour not in visited:
+                nc = cc + cost
+                nf = nc + h[neighbour]
+                q.put((nf,nc,neighbour,cp+[neighbour]))
+    return float("inf"), []
+
+
+# ---- User Input ----
+graph = {}
+n = int(input("Enter the number of nodes: "))
+
+for _ in range(n):
+    node = input("Enter node name: ")
+    edges = {}
+    m = int(input(f"Enter number of neighbors for {node}: "))
+    for _ in range(m):
+        neighbor = input("Enter neighbor name: ")
+        weight = int(input(f"Enter weight from {node} to {neighbor}: "))
+        edges[neighbor] = weight
+    graph[node] = edges
+
+start = input("Enter start node: ")
+goal = input("Enter goal node: ")
+
+cost, path = ucs(start, goal, graph)
+if path:
+    print(f"Minimum cost from {start} to {goal} = {cost}")
+    print("Path:", " -> ".join(path))
+else:
+    print(f"No path found from {start} to {goal}")
