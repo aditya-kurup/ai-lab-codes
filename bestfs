@@ -1,0 +1,58 @@
+import heapq
+
+def best_first_search(start, goal, graph, heuristics):
+    # Priority queue with (heuristic, node, path)
+    queue = [(heuristics[start], start, [start])]
+    visited = set()
+
+    while queue:
+        _, node, path = heapq.heappop(queue)
+
+        # Goal check
+        if node == goal:
+            return path
+
+        visited.add(node)
+
+        # Explore neighbors
+        for neighbor in graph.get(node, {}):
+            if neighbor not in visited:
+                heapq.heappush(queue, (heuristics[neighbor], neighbor, path + [neighbor]))
+
+    return None
+
+
+# -------------------------
+# 🧩 User Input Section
+# -------------------------
+graph = {}
+n = int(input("Enter the number of nodes: "))
+
+for _ in range(n):
+    node = input("Enter node name: ")
+    edges = {}
+    m = int(input(f"Enter number of neighbors for {node}: "))
+    for _ in range(m):
+        neighbor = input("Enter neighbor name: ")
+        weight = int(input(f"Enter weight from {node} to {neighbor}: "))
+        edges[neighbor] = weight
+    graph[node] = edges
+
+# Input heuristic values
+heuristics = {}
+print("\nEnter heuristic values for each node:")
+for node in graph:
+    heuristics[node] = int(input(f"Heuristic value for {node}: "))
+
+start = input("\nEnter start node: ")
+goal = input("Enter goal node: ")
+
+# -------------------------
+# 🏁 Run Best First Search
+# -------------------------
+path = best_first_search(start, goal, graph, heuristics)
+
+if path:
+    print("\nPath found:", " -> ".join(path))
+else:
+    print(f"\nNo path found from {start} to {goal}.")
